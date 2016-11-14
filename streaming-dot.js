@@ -19,6 +19,7 @@
       evaluate:    /\{\{(([^\}]+|\\.)+)\}\}/g,
       interpolate: /\{\{=([^\}]+)\}\}/g,
       conditional: /\{\{\?\s*([^\}]*)\}\}/g,
+      node: typeof(process) === 'object',
       varname: "it",
     }
   });
@@ -50,7 +51,7 @@
 
     if(c.node) {
       tmpl += 
-        `var e = new EventEmitter();
+        `var e = new EE();
         var p = P();
         for(let v of g) {
           p = p.then(_ => v).then(v => v && e.emit('data', v));
@@ -72,7 +73,7 @@
     try {
       if (c.noEval) return tmpl;
       if (c.node) {
-        const f = new Function(c.varname, 'EventEmitter', tmpl);
+        const f = new Function(c.varname, 'EE', tmpl); // EE === EventEmitter
         return it => f(it, EventEmitter);
       } 
       return new Function(c.varname, tmpl);
