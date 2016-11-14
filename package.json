@@ -1,0 +1,23 @@
+{
+  "name": "streaming-dot",
+  "version": "1.0.0",
+  "description": "doT-based streaming templating engine for Node and the web",
+  "main": "streaming-dot.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1",
+    "build": "babili streaming-dot.js -o streaming-dot.min.js"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://github.com/surma/streaming-dot.git"
+  },
+  "author": "Surma <surma@google.com>",
+  "license": "MIT",
+  "bugs": {
+    "url": "https://github.com/surma/streaming-dot/issues"
+  },
+  "homepage": "https://github.com/surma/streaming-dot#readme",
+  "devDependencies": {
+    "babili": "^0.0.8"
+  }
+}

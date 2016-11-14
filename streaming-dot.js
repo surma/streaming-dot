@@ -1,7 +1,9 @@
-// doT.js
-// 2011-2014, Laura Doktorova, https://github.com/olado/doT
-// Made streamable by Surma 2016, Surma <surma@google.com>
-// Licensed under the MIT license.
+/**! 
+ * doT.js
+ * 2011-2014, Laura Doktorova, https://github.com/olado/doT
+ * Made streamable by Surma <surma@google.com>
+ * Licensed under the MIT license.
+ */
 
 (function (root, factory) {
   if (typeof exports === 'object' && typeof exports.nodeName !== 'string') {
@@ -94,7 +96,7 @@
     try {
       if (c.noEval) return tmpl;
       if (c.node) {
-        const f = new Function(c.varname, 'EE', tmpl); // EE === EventEmitter
+        const f = new Function(c.varname, 'EE', tmpl); 
         return it => f(it, EventEmitter);
       } 
       return new Function(c.varname, tmpl);
