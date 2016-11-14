@@ -17,6 +17,7 @@
     templateSettings: {
       evaluate:    /\{\{(([^\}]+|\\.)+)\}\}/g,
       interpolate: /\{\{=([^\}]+)\}\}/g,
+      stream: /\{\{~([^\}]+)\}\}/g,
       conditional: /\{\{\?\s*([^\}]*)\}\}/g,
       node: typeof(process) === 'object',
       varname: "it",
@@ -29,8 +30,20 @@
 
   exports.compile = function(tmpl, c, def) {
     c = Object.assign({}, exports.templateSettings, c);
+    var promiseBind = "var P=Promise.resolve.bind(Promise);";
+    var readableStreamToGenerator = `
+    var s = (r) => {
+      r = r.getReader();
+      var done = false;
+      return {
+        next: _ => ({done, value: r.read().then(v => {done = v.done; return P(v.value)})}),
+        [Symbol.iterator]: function(){return this}
+      };
+    };
+    `
 
-    tmpl = "var P=Promise.resolve.bind(Promise);var g=function* () {yield P('"
+    tmpl = promiseBind + readableStreamToGenerator +
+        "var g=function* () {yield P('"
         + tmpl
             .replace(/'|\\/g, "\\$&")
             .replace(c.interpolate, function(m, code) {
@@ -42,6 +55,9 @@
               } else { // {{?}} === "endif"
                 return "'));yield P('";
               }
+            })
+            .replace(c.stream, function(m, code) {
+              return "');yield* s(" + unescape(code) + ");yield P('";
             })
             .replace(c.evaluate, function(m, code) {
               return "');" + unescape(code) + ";yield P('";
@@ -66,7 +82,10 @@
           pull: ctr => {
             var v = g.next();
             if (v.done) return ctr.close();
-            v.value.then(data=>data&&ctr.enqueue(e.encode(data)));
+            v.value.then(data => {
+              if (typeof(data) === "string") data = e.encode(data);
+              data && ctr.enqueue(data);
+            });
             return v.value;
           }
         });`;
