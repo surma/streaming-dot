@@ -17,8 +17,8 @@
     version: "1.0.0",
     templateSettings: {
       // evaluate:    /\{\{([\s\S]+?(\}?)+)\}\}/g,
-      interpolate: /\{\{=([\s\S]+?)\}\}/g,
-      // conditional: /\{\{\?(\?)?\s*([\s\S]*?)\s*\}\}/g,
+      interpolate: /\{\{=([^\}]+)\}\}/g,
+      conditional: /\{\{\?\s*([^\}]*)\}\}/g,
       // iterate:     /\{\{~\s*(?:\}\}|([\s\S]+?)\s*\:\s*([\w$]+)\s*(?:\:\s*([\w$]+))?\s*\}\})/g,
       varname: "it",
       parse: true,
@@ -43,6 +43,13 @@
          + tmpl.replace(/'|\\/g, "\\$&")
             .replace(c.interpolate, function(m, code) {
               return startend.start + unescape(code) + startend.end;
+            })
+            .replace(c.conditional, function(m, code) {
+              if (code) { // if
+                return "'); yield Promise.resolve(" + unescape(code) + ").then(v => {if(v){ return Promise.resolve('"
+              } else { // "endif"
+                return "');}else{return Promise.resolve('');}}); yield Promise.resolve('";
+              }
             })
          + `');
       })();`;
