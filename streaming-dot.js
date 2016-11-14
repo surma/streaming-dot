@@ -3,7 +3,6 @@
 // Made streamable by Surma 2016, Surma <surma@google.com>
 // Licensed under the MIT license.
 
-
 (function (root, factory) {
   if (typeof exports === 'object' && typeof exports.nodeName !== 'string') {
       factory(exports, require('events'));
@@ -47,6 +46,9 @@
             .replace(c.evaluate, function(m, code) {
               return "');" + unescape(code) + ";yield P('";
             })
+            .replace(/\n/g, "\\n")
+            .replace(/\t/g, '\\t')
+            .replace(/\r/g, "\\r")
          + "');}();";
 
     if(c.node) {
@@ -60,11 +62,11 @@
         return e`;
     } else {
       tmpl +=
-        `return new ReadableStream({
+        `var e=new TextEncoder();return new ReadableStream({
           pull: ctr => {
             var v = g.next();
             if (v.done) return ctr.close();
-            v.value.then(data=>data&&ctr.enqueue(data));
+            v.value.then(data=>data&&ctr.enqueue(e.encode(data)));
             return v.value;
           }
         });`;
