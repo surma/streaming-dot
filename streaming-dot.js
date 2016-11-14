@@ -50,22 +50,20 @@
 
     if(c.node) {
       tmpl += 
-        `var emitter = new EventEmitter();
+        `var e = new EventEmitter();
         var p = P();
         for(let v of g) {
-          p = p.then(_ => v).then(v => v && emitter.emit('data', v));
+          p = p.then(_ => v).then(v => v && e.emit('data', v));
         }
-        p.then(_ => emitter.emit('end'));
-        return emitter`;
+        p.then(_ => e.emit('end'));
+        return e`;
     } else {
       tmpl +=
         `return new ReadableStream({
           pull: ctr => {
             var v = g.next();
-            v.value && v.value.then(data => {
-              if (v.done) return ctr.close();
-              data && ctr.enqueue(data);
-            });
+            if (v.done) return ctr.close();
+            v.value.then(data=>data&&ctr.enqueue(data));
             return v.value;
           }
         });`;
