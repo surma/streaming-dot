@@ -37,10 +37,11 @@
     var s = (r) => {
       r = r.getReader();
       var done = false;
-      return {
+      var x = {
         next: _ => ({done, value: r.read().then(v => {done = v.done; return P(v.value)})}),
-        [Symbol.iterator]: function(){return this}
+        [Symbol.iterator]: _ => x
       };
+      return x;
     };
     `
 
