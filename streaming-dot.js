@@ -35,33 +35,23 @@
     var promiseBind = "var P=Promise.resolve.bind(Promise);";
     var streamToGenerator;
     if (c.node) {
-      streamToGenerator = `
-        var s = (r) => {
-          var done = false;
-          r.on('end', _ => {done = true});
-          x = {
-            next: _ => ({done, value: new Promise(resolve => r.once('data', chunk => resolve(chunk)))}),
-            [Symbol.iterator]: _ => x
-          };
-          return x;
-        };
-      `;
+      streamToGenerator = 
+`var s=(r)=>{
+var d=!1;
+r.on('end',_=>{d=!0});
+return i={next:_=> ({done:d,value:new Promise(p=>r.once('data',c=>p(c)))}),[Symbol.iterator]:_=>i};
+};`;
     } else {
-      streamToGenerator = `
-        var s = (r) => {
-          r = r.getReader();
-          var done = false;
-          var x = {
-            next: _ => ({done, value: r.read().then(v => {done = v.done; return P(v.value)})}),
-            [Symbol.iterator]: _ => x
-          };
-          return x;
-        };
-        `;
+      streamToGenerator = 
+`var s = (r) => {
+r=r.getReader();
+var d = !1;
+return i={next:_=>({done:d,value:r.read().then(v=>{d=v.done;return P(v.value)})}),[Symbol.iterator]:_=>i};
+};`;
     }
 
     tmpl = promiseBind + streamToGenerator +
-        "var g=function* () {yield P('"
+        "var g=function*(){yield P('"
         + tmpl
             .replace(/'|\\/g, "\\$&")
             .replace(c.interpolate, function(_, code) {
@@ -87,28 +77,28 @@
 
     if(c.node) {
       tmpl += 
-        `var e = new EE();
-        var data = g.next();
-        P(data.value).then(function f(v) {
-          if (data.done) return e.emit('end');
-          v && e.emit('data', Buffer.from(v));
-          data = g.next();
-          return P(data.value).then(f);
-        });
-        return e`;
+`var e=new EE(),
+d=g.next();
+P(d.value).then(function f(v){
+if(d.done)return e.emit('end');
+v&&e.emit('data',Buffer.from(v));
+d=g.next();
+return P(d.value).then(f);
+});
+return e;`;
     } else {
       tmpl +=
-        `var e=new TextEncoder();return new ReadableStream({
-          pull: ctr => {
-            var v = g.next();
-            if (v.done) return ctr.close();
-            v.value.then(data => {
-              if (typeof(data) === "string") data = e.encode(data);
-              data && ctr.enqueue(data);
-            });
-            return v.value;
-          }
-        });`;
+`var e=new TextEncoder();
+return new ReadableStream({
+pull: c=>{
+var v=g.next();
+if(v.done)return c.close();
+v.value.then(d=>{
+if(typeof(d)=="string")d=e.encode(d);
+d&&c.enqueue(d);
+});
+return v.value;
+}});`;
     }
 
     try {
