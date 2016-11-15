@@ -9,10 +9,15 @@
   let readStream, readStreamAsString, stringToStream;
 
   describe('doT', function () {
-    it('compiles a template', function () {
+    it('compiles a template to functions', function () {
       const template = doT.compile('lol');
       return readStreamAsString(template({})) 
         .then(s => expect(s).to.equal('lol'));
+    });
+
+    it('compiles a template to JavaScript', function () {
+      const template = doT.compile('lol', {noEval: true});
+      expect(typeof(template)).to.equal('string');
     });
 
     it('inserts values correctly', function () {
@@ -66,7 +71,8 @@
     stringToStream = function stringToStreamWeb(s) {
       var Readable = require('stream').Readable;
       var r = new Readable();
-      r.push(Buffer.from(s));
+      r.push(Buffer.from(s.substr(0, s.length/2)));
+      r.push(Buffer.from(s.substr(s.length/2)));
       r.push(null);
       return r;
     };

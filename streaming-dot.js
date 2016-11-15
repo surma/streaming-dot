@@ -17,7 +17,7 @@
   Object.assign(exports, {
     version: "1.0.0",
     templateSettings: {
-      evaluate:    /\{\{(([^\}]+|\\.)+)\}\}/g,
+      evaluate: /\{\{(([^\}]+|\\.)+)\}\}/g,
       interpolate: /\{\{=\s*([^\}]+)\}\}/g,
       stream: /\{\{~\s*([^\}]+)\}\}/g,
       conditional: /\{\{\?\s*([^\}]*)\}\}/g,
@@ -37,15 +37,15 @@
     if (c.node) {
       streamToGenerator = 
 `var s=(r)=>{
-var d=!1;
+var d=!1,l,b=[];
 r.on('end',_=>{d=!0});
-return i={next:_=> ({done:d,value:new Promise(p=>r.once('data',c=>p(c)))}),[Symbol.iterator]:_=>i};
-};`;
+r.on('data',c=>(l&&(v=>{var t=l;l=null;t(v)})||(d=>b.push(d)))(c));
+return i={next:_=>({done:b.length===0&&d,value:P(b.shift()||new Promise(r=>l=r))}),[Symbol.iterator]:_=>i};};`;
     } else {
       streamToGenerator = 
 `var s = (r) => {
 r=r.getReader();
-var d = !1;
+var d=!1;
 return i={next:_=>({done:d,value:r.read().then(v=>{d=v.done;return P(v.value)})}),[Symbol.iterator]:_=>i};
 };`;
     }
