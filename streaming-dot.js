@@ -18,8 +18,8 @@
     version: "1.0.0",
     templateSettings: {
       evaluate:    /\{\{(([^\}]+|\\.)+)\}\}/g,
-      interpolate: /\{\{=([^\}]+)\}\}/g,
-      stream: /\{\{~([^\}]+)\}\}/g,
+      interpolate: /\{\{=\s*([^\}]+)\}\}/g,
+      stream: /\{\{~\s*([^\}]+)\}\}/g,
       conditional: /\{\{\?\s*([^\}]*)\}\}/g,
       node: typeof(process) === 'object',
       varname: "it",
@@ -33,19 +33,34 @@
   exports.compile = function(tmpl, c, def) {
     c = Object.assign({}, exports.templateSettings, c);
     var promiseBind = "var P=Promise.resolve.bind(Promise);";
-    var readableStreamToGenerator = `
-    var s = (r) => {
-      r = r.getReader();
-      var done = false;
-      var x = {
-        next: _ => ({done, value: r.read().then(v => {done = v.done; return P(v.value)})}),
-        [Symbol.iterator]: _ => x
-      };
-      return x;
-    };
-    `
+    var streamToGenerator;
+    if (c.node) {
+      streamToGenerator = `
+        var s = (r) => {
+          var done = false;
+          r.on('end', _ => {done = true});
+          x = {
+            next: _ => ({done, value: new Promise(resolve => r.once('data', chunk => resolve(chunk)))}),
+            [Symbol.iterator]: _ => x
+          };
+          return x;
+        };
+      `;
+    } else {
+      streamToGenerator = `
+        var s = (r) => {
+          r = r.getReader();
+          var done = false;
+          var x = {
+            next: _ => ({done, value: r.read().then(v => {done = v.done; return P(v.value)})}),
+            [Symbol.iterator]: _ => x
+          };
+          return x;
+        };
+        `;
+    }
 
-    tmpl = promiseBind + readableStreamToGenerator +
+    tmpl = promiseBind + streamToGenerator +
         "var g=function* () {yield P('"
         + tmpl
             .replace(/'|\\/g, "\\$&")
@@ -73,11 +88,13 @@
     if(c.node) {
       tmpl += 
         `var e = new EE();
-        var p = P();
-        for(let v of g) {
-          p = p.then(_ => v).then(v => v && e.emit('data', Buffer.from(v)));
-        }
-        p.then(_ => e.emit('end'));
+        var data = g.next();
+        P(data.value).then(function f(v) {
+          if (data.done) return e.emit('end');
+          e.emit('data', Buffer.from(v));
+          data = g.next();
+          return P(data.value).then(f);
+        });
         return e`;
     } else {
       tmpl +=
