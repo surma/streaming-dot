@@ -30,8 +30,7 @@
     })    
     
     it('handles conditionals correctly', function () {
-      const template = doT.compile('{{?it.c1}}C1{{?}}_placeholder_{{?it.c2}}C2{{?}}', {noEval: true});
-      console.log(template.toString());
+      const template = doT.compile('{{?it.c1}}C1{{?}}_placeholder_{{?it.c2}}C2{{?}}');
       return readStreamAsString(template({
         c1: false,
         c2: true

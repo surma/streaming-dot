@@ -64,20 +64,20 @@
         "var g=function* () {yield P('"
         + tmpl
             .replace(/'|\\/g, "\\$&")
-            .replace(c.interpolate, function(m, code) {
+            .replace(c.interpolate, function(_, code) {
               return "');yield P(" + unescape(code) + ");yield P('";
             })
-            .replace(c.conditional, function(m, code) {
+            .replace(c.conditional, function(_, code) {
               if (code) { // {{?<something>}} === if
                 return "');yield P(" + unescape(code) + ").then(v=>v&&P('"
               } else { // {{?}} === "endif"
                 return "'));yield P('";
               }
             })
-            .replace(c.stream, function(m, code) {
+            .replace(c.stream, function(_, code) {
               return "');yield* s(" + unescape(code) + ");yield P('";
             })
-            .replace(c.evaluate, function(m, code) {
+            .replace(c.evaluate, function(_, code) {
               return "');" + unescape(code) + ";yield P('";
             })
             .replace(/\n/g, "\\n")
@@ -91,7 +91,7 @@
         var data = g.next();
         P(data.value).then(function f(v) {
           if (data.done) return e.emit('end');
-          e.emit('data', Buffer.from(v));
+          v && e.emit('data', Buffer.from(v));
           data = g.next();
           return P(data.value).then(f);
         });
