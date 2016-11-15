@@ -3,7 +3,7 @@
 
   const isNode = typeof(process) === 'object';
   const doT = root.doT || require('../streaming-dot.js');
-  const expect = root.chai && this.chai.expect || require('chai').expect;
+  const expect = root.chai && root.chai.expect || require('chai').expect;
 
   // Defined below depending on `isNode`
   let readStream, readStreamAsString, stringToStream;
@@ -22,6 +22,15 @@
         asyncThing: new Promise(resolve => setTimeout(_ => resolve('async'), 10))
       })).then(s => expect(s).to.equal('test_placeholder_async'));
     });
+
+    it('inserts literals correctly', function () {
+      const template = doT.compile('{{=""+(1+1)}}_placeholder_{{=""+(5*5)}}');
+      return readStreamAsString(template({
+        syncThing: 'test',
+        asyncThing: new Promise(resolve => setTimeout(_ => resolve('async'), 10))
+      })).then(s => expect(s).to.equal('2_placeholder_25'));
+    });
+
 
     it('inserts streams correctly', function () {
       const template = doT.compile('{{~it.input1}}_placeholder_{{~it.input2}}');
