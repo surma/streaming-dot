@@ -7,11 +7,11 @@
 
 (function (root, factory) {
   if (typeof exports === 'object' && typeof exports.nodeName !== 'string') {
-      factory(exports, require('events'));
+      factory(exports);
   } else {
       factory((root.doT = {}));
   }
-}(this, function (exports, EventEmitter) {
+}(this, function (exports) {
   "use strict";
 
   Object.assign(exports, {
@@ -78,16 +78,14 @@ return i={next:_=>({done:d,value:r.then(r=>r.read()).then(v=>{d=v.done;return P(
          + "');}();";
 
     if(c.node) {
-      tmpl += 
-`var e=new EE(),
-d=g.next();
-P(d.value).then(function f(v){
-if(d.done)return e.emit('end');
-v&&e.emit('data',Buffer.from(v));
-d=g.next();
-return P(d.value).then(f);
-});
-return e;`;
+      tmpl +=
+`var r = new R({read:function f() {
+var d=g.next();
+if(d.done) return r.push(null);
+P(d.value).then(v=>{if(v)return r.push(Buffer.from(v));else f()});
+}});
+return r;
+`;
     } else {
       tmpl +=
 `var e=new TextEncoder();
@@ -106,8 +104,8 @@ return v.value;
     try {
       if (c.noEval) return tmpl;
       if (c.node) {
-        const f = new Function(c.varname, 'EE', tmpl); 
-        return it => f(it, EventEmitter);
+        const f = new Function(c.varname, 'R', tmpl); 
+        return it => f(it, require('stream').Readable);
       } 
       return new Function(c.varname, tmpl);
     } catch (e) {
