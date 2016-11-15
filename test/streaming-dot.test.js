@@ -43,15 +43,34 @@
         input1: stringToStream('stream1'),
         input2: stringToStream('stream2')
       })).then(s => expect(s).to.equal('stream1_placeholder_stream2'));
-    })    
-    
+    });
+
     it('handles conditionals correctly', function () {
       const template = doT.compile('{{?it.c1}}C1{{?}}_placeholder_{{?it.c2}}C2{{?}}');
       return readStreamAsString(template({
         c1: false,
         c2: true
       })).then(s => expect(s).to.equal('_placeholder_C2'));
-    });;
+    });
+
+    // Node-specific tests
+    if(isNode) {
+      describe('in node', function () {
+        it('handles waiting correctly', function () {
+          const template = doT.compile('{{~it.r}}');
+          let chunks = [Buffer.from('a'), Buffer.from('b')];
+          let r = new require('stream').Readable({
+            read: function () {
+              let chunk = chunks.shift();
+              if (!chunk) this.push(null);
+              setTimeout(_ => this.push(chunk), 300);
+            }
+          });
+          return readStreamAsString(template({r: r}))
+            .then(s => expect(s).to.equal('ab'));
+        });
+      });
+    }
   });
 
   if (isNode) {
@@ -69,12 +88,13 @@
     }
 
     stringToStream = function stringToStreamWeb(s) {
-      var Readable = require('stream').Readable;
-      var r = new Readable();
-      r.push(Buffer.from(s.substr(0, s.length/2)));
-      r.push(Buffer.from(s.substr(s.length/2)));
-      r.push(null);
-      return r;
+      return new require('stream').Readable({
+        read: function() {
+          this.push(Buffer.from(s.substr(0, s.length/2)));
+          this.push(Buffer.from(s.substr(s.length/2)));
+          this.push(null);
+        }
+      });
     };
   } else {
     readStream = function readStreamWeb(s) {
