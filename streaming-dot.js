@@ -74,7 +74,7 @@
         `var e = new EE();
         var p = P();
         for(let v of g) {
-          p = p.then(_ => v).then(v => v && e.emit('data', v));
+          p = p.then(_ => v).then(v => v && e.emit('data', Buffer.from(v)));
         }
         p.then(_ => e.emit('end'));
         return e`;
