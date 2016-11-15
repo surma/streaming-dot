@@ -38,15 +38,17 @@
       streamToGenerator = 
 `var s=(r)=>{
 var d=!1,l,b=[];
+r.then(r=>{
 r.on('end',_=>{d=!0;l&&l()});
 r.on('data',c=>(l&&(v=>{var t=l;l=null;t(v)})||(d=>b.push(d)))(c));
+});
 return i={next:_=>({done:b.length===0&&d,value:P(b.shift()||new Promise(r=>l=r))}),[Symbol.iterator]:_=>i};};`;
     } else {
       streamToGenerator = 
 `var s = (r) => {
-r=r.getReader();
+r=r.then(r=>r.getReader());
 var d=!1;
-return i={next:_=>({done:d,value:r.read().then(v=>{d=v.done;return P(v.value)})}),[Symbol.iterator]:_=>i};
+return i={next:_=>({done:d,value:r.then(r=>r.read()).then(v=>{d=v.done;return P(v.value)})}),[Symbol.iterator]:_=>i};
 };`;
     }
 
@@ -65,7 +67,7 @@ return i={next:_=>({done:d,value:r.read().then(v=>{d=v.done;return P(v.value)})}
               }
             })
             .replace(c.stream, function(_, code) {
-              return "');yield* s(" + unescape(code) + ");yield P('";
+              return "');yield* s(P(" + unescape(code) + "));yield P('";
             })
             .replace(c.evaluate, function(_, code) {
               return "');" + unescape(code) + ";yield P('";
