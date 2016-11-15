@@ -63,7 +63,7 @@
             read: function () {
               let chunk = chunks.shift();
               if (!chunk) this.push(null);
-              setTimeout(_ => this.push(chunk), 300);
+              setTimeout(_ => this.push(chunk), 10);
             }
           });
           return readStreamAsString(template({r: r}))

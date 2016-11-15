@@ -38,7 +38,7 @@
       streamToGenerator = 
 `var s=(r)=>{
 var d=!1,l,b=[];
-r.on('end',_=>{d=!0});
+r.on('end',_=>{d=!0;l&&l()});
 r.on('data',c=>(l&&(v=>{var t=l;l=null;t(v)})||(d=>b.push(d)))(c));
 return i={next:_=>({done:b.length===0&&d,value:P(b.shift()||new Promise(r=>l=r))}),[Symbol.iterator]:_=>i};};`;
     } else {
