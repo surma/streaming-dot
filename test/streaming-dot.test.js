@@ -1,4 +1,6 @@
 (function (root) {
+  'use strict';
+
   const isNode = typeof(process) === 'object';
   const doT = root.doT || require('../streaming-dot.js');
   const expect = root.chai && this.chai.expect || require('chai').expect;
