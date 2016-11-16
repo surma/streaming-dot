@@ -42,6 +42,16 @@ Compiles `templateString` to a JavaScript. By default, it returns a function tha
 * `noEval`: If `true`, return the functions code instead of an evaluated function. 
 * `varname`: The name under which the data object is accessible in the template expressions. 
 
+## Compatibility
+
+| Browser | Support | Links |
+|---------|---------|-------|
+| Node    | ✅ ≥5   |       |
+| Chrome  | ✅ ≥52  | |
+| Firefox | ⏰ In Development | Missing [ReadableStreams](https://bugzilla.mozilla.org/show_bug.cgi?id=1128959) |
+| Safari  | ⏰ In Development | Missing [ReadableStreams](https://bugs.webkit.org/show_bug.cgi?id=138967), Generators and TextDecoder |
+| Edge    | ⏰ In Development | Missing TextDecoder |
+
 ## Example
 
 A fully runnable example can be found in the `example` folder. It is a node webserver using streaming doT as a templating language. The website itself has a service worker that uses streaming doT with the same template.
