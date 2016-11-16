@@ -25,7 +25,7 @@
   "use strict";
 
   Object.assign(exports, {
-    version: "1.0.1",
+    version: "1.0.2",
     templateSettings: {
       evaluate: /\{\{(([^\}]+|\\.)+)\}\}/g,
       interpolate: /\{\{=\s*([^\}]+)\}\}/g,

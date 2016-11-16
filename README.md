@@ -112,7 +112,7 @@ self.onfetch = event => event.respondWith(
 Apache 2.0
 
 ---
-Version 1.0.1
+Version 1.0.2
 
 [doT]: https://github.com/olado/doT
 [HyperDev]: https://hyperdev.com/
