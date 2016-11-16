@@ -4,7 +4,9 @@
   "description": "doT-based streaming templating engine for Node and the web",
   "main": "streaming-dot.js",
   "scripts": {
-    "test": "mocha",
+    "test": "npm run test-node && npm run test-browser",
+    "test-node": "mocha",
+    "test-browser": "karma start",
     "version": "./update-version.sh",
     "build": "babili streaming-dot.js -o streaming-dot.min.js"
   },
