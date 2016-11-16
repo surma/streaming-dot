@@ -3,7 +3,7 @@ importScripts('/streaming-dot.js');
 const ASSETS = [
   '/header.partial.html',
   '/footer.partial.html',
-  '/index.dot'
+  '/index.dot.html'
 ];
 
 self.oninstall = event => event.waitUntil(
@@ -21,7 +21,7 @@ function timeoutPromise(t) {
 }
 
 self.onfetch = event => event.respondWith(
-  caches.match('/index.dot')
+  caches.match('/index.dot.html')
     .then(response => response.text())
     .then(body => {
       const template = doT.compile(body);

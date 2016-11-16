@@ -6,7 +6,7 @@ var app = express();
 
 app.get('/streaming-dot.js', express.static('../'));
 app.get('/', (req, res, next) => {
-  fs.readFile('app/index.dot', 'utf-8', (_, data) => {
+  fs.readFile('app/index.dot.html', 'utf-8', (_, data) => {
     var template = doT.compile(data);
     var stream = template({
       header: fs.createReadStream('app/header.partial.html'),
