@@ -30,7 +30,7 @@ Compiles `templateString` to a JavaScript. By default, it returns a function tha
   evaluate: /\{\{(([^\}]+|\\.)+)\}\}/g,
   interpolate: /\{\{=\s*([^\}]+)\}\}/g,
   stream: /\{\{~\s*([^\}]+)\}\}/g,
-  conditional: /\{\{\?\s*([^\}]*)\}\}/g,
+  conditional: /\{\{\?(\?)?\s*([^\}]*)?\}\}/g,
   node: typeof(process) === 'object',
   noEval: false,
   varname: "it"
