@@ -8,7 +8,7 @@ Quick facts:
 * Generates a stream
 * Can consume streams and promises
 * Built for Node and for the web
-* 2KB small (<1KB gzip’d)
+* 2KB small (1KB gzip’d)
 * Conditionals built in
 * Compiles templates to JavaScript
 * Templates can contain arbitrary JavaScript
