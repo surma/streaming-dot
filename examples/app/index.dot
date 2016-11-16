@@ -1,0 +1,6 @@
+{{~it.header}}
+
+<h1>This is a doT template</h1>
+<h2>This content was generated {{=it.location}}</h2>
+
+{{~it.footer}}
