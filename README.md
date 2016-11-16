@@ -109,7 +109,7 @@ self.onfetch = event => event.respondWith(
 ```
 
 ## License
-MIT
+Apache 2.0
 
 ---
 Version 1.0.1
