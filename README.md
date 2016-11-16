@@ -7,21 +7,21 @@ Quick facts:
 
 * Generates a stream
 * Can consume streams and promises
-* Built for Node and for the web
+* Built for Node and for the web (with ServiceWorkers in mind)
 * 2KB small (1KB gzip’d)
-* Conditionals built in
+* Conditionals built-in
 * Compiles templates to JavaScript
 * Templates can contain arbitrary JavaScript
 
 ## Usage
 
 ### `doT.compile(templateString, opts)`
-Compiles `templateString` to a JavaScript. By default, it returns a function that takes the data object as an argument. Inside the template string one of the following expressions can be used:
+Compiles `templateString` to JavaScript. By default, it returns a function that takes the data object as an argument. Inside the template string the following expressions can be used:
 
-* `{{=<value>}}`: Inserts `<value>` into the template. `<value>` must be a string or a Promise that resolves to a string. The data object is accessible as `it`.
-* `{{?<value>}}...{{?}}`: Only insert `...` if `<value>` is truthy or is a Promise that resolves to a truthy value.
+* `{{=<value>}}`: Inserts `<value>` into the template. `<value>` must be a string, a `Uint8Array` or a Promise that resolves to a value of any of these types. The data object is accessible as `it`.
+* `{{?<value>}}...A...{{??}}...B...{{?}}`: Only inserts A if `<value>` is truthy or is a Promise that resolves to a truthy value. Otherwise, B is inserted. The B block is optional.
 * `{{~<value>}}`: Inserts `<value>` into the template. `<value>` must be a stream.
-* `{{<code>}}`: Inserts `<code>` into the generator function. The code can yield Promises to insert them into the template. For example, `{{=it.name}}` is equivalent to `{{yield Promise.resolve(it.name)}}`
+* `{{<code>}}`: Inserts `<code>` into the [generator function]. The code can `yield` Promises to insert their value into the template. For example, `{{=it.name}}` is equivalent to `{{yield Promise.resolve(it.name)}}`
 
 `opts` is an object with any subset of the following default values:
 
@@ -38,8 +38,8 @@ Compiles `templateString` to a JavaScript. By default, it returns a function tha
 ```
 
 * `evaluate`, `interpolate`, `stream` and `conditional` are the RegExps for the previously mentioned template expressions.
-* `node`: If `true`, the generated code will run be targeted for Node, otherwise for browsers.
-* `noEval`: If `true`, return the functions code instead of an evaluated function. 
+* `node`: If `true`, the generated code will be targeted for Node, otherwise for browsers.
+* `noEval`: If `true`, return the functions code instead of a callable. 
 * `varname`: The name under which the data object is accessible in the template expressions. 
 
 ## Compatibility
@@ -59,7 +59,7 @@ Compiles `templateString` to a JavaScript. By default, it returns a function tha
 
 ## Example
 
-A fully runnable example can be found in the `example` folder. It is a node webserver using streaming doT as a templating language. The website itself has a service worker that uses streaming doT with the same template.
+A fully runnable example can be found in the `example` folder. It is a node webserver using streaming doT as a templating language. The website has a service worker that uses streaming doT as well.
 
 To run the example, start the webserver by running `node index.js` in the `example` folder or visit https://streaming-dot-example.hyperdev.space/ for a hosted version of the example code (thanks [HyperDev]).
 
@@ -121,3 +121,4 @@ Version 1.0.2
 
 [doT]: https://github.com/olado/doT
 [HyperDev]: https://hyperdev.com/
+[generator function]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*
