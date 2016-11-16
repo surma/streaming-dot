@@ -20,7 +20,7 @@
       evaluate: /\{\{(([^\}]+|\\.)+)\}\}/g,
       interpolate: /\{\{=\s*([^\}]+)\}\}/g,
       stream: /\{\{~\s*([^\}]+)\}\}/g,
-      conditional: /\{\{\?\s*([^\}]*)\}\}/g,
+      conditional: /\{\{\?(\?)?\s*([^\}]*)?\}\}/g,
       node: typeof(process) === 'object',
       varname: "it",
     }
@@ -59,9 +59,11 @@ return i={next:_=>({done:d,value:r.then(r=>r.read()).then(v=>{d=v.done;return P(
             .replace(c.interpolate, function(_, code) {
               return "');yield P(" + unescape(code) + ");yield P('";
             })
-            .replace(c.conditional, function(_, code) {
-              if (code) { // {{?<something>}} === if
-                return "');yield P(" + unescape(code) + ").then(v=>v&&P('"
+            .replace(c.conditional, function(_, els, code) {
+              if (code && !els) { // {{?<something>}} === if
+                return "');yield P(" + unescape(code) + ").then(v=>v&&P('";
+              } else if (!code && els) { // {{??}} === else
+                return "')||P('";
               } else { // {{?}} === "endif"
                 return "'));yield P('";
               }

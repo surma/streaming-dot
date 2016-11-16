@@ -54,9 +54,16 @@ To run the example, start the webserver by running `node index.js` in the `examp
 {{~it.header}}
 
 <h1>This is a doT template</h1>
-<h2>This content was generated {{=it.location}}</h2>
+<h2>
+  This content was generated 
+  {{?it.serviceworker}}
+    in a service-worker
+  {{??}}
+    server-side (refresh for ServiceWorker)
+  {{?}}
+</h2>
 
-{{~it.footer}}
+{{~it.footer}}}
 ```
 
 ### Node
@@ -68,7 +75,6 @@ function handler(req, res) {
     var stream = template({
       header: fs.createReadStream('app/header.partial.html'),
       footer: fs.createReadStream('app/footer.partial.html'),
-      location: timeoutPromise(2000).then(_ => 'server-side')
     });
     res.set('Content-Type', 'text/html');
     stream.pipe(res)
@@ -86,7 +92,7 @@ self.onfetch = event => event.respondWith(
       const response = template({
         header: caches.match('/header.partial.html').then(r => r.body),
         footer: caches.match('/footer.partial.html').then(r => r.body),
-        location: timeoutPromise(2000).then(_ => 'in a service-worker')
+        serviceworker: timeoutPromise(2000).then(_ => true)
       });
       return new Response(response, {headers: {'Content-Type': 'text/html'}});
 );

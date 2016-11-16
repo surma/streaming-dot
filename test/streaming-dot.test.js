@@ -46,11 +46,12 @@
     });
 
     it('handles conditionals correctly', function () {
-      const template = doT.compile('{{?it.c1}}C1{{?}}_placeholder_{{?it.c2}}C2{{?}}');
+      const template = doT.compile('{{?it.c1}}C1{{?}}_placeholder_{{?it.c2}}C2{{?}}_placeholder_{{?it.c3}}C3T{{??}}C3F{{?}}');
       return readStreamAsString(template({
         c1: false,
-        c2: true
-      })).then(s => expect(s).to.equal('_placeholder_C2'));
+        c2: true,
+        c3: false
+      })).then(s => expect(s).to.equal('_placeholder_C2_placeholder_C3F'));
     });
 
     // Node-specific tests
