@@ -46,7 +46,7 @@ Compiles `templateString` to a JavaScript. By default, it returns a function tha
 
 A fully runnable example can be found in the `example` folder. It is a node webserver using streaming doT as a templating language. The website itself has a service worker that uses streaming doT with the same template.
 
-To run the example, start the webserver by running `node index.js` in the `example` folder.
+To run the example, start the webserver by running `node index.js` in the `example` folder or visit https://streaming-dot-example.hyperdev.space/ for a hosted version of the example code (thanks [HyperDev]).
 
 ### Template
 
@@ -105,3 +105,4 @@ MIT
 Version 1.0.1
 
 [doT]: https://github.com/olado/doT
+[HyperDev]: https://hyperdev.com/
