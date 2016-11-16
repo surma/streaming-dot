@@ -52,6 +52,11 @@ Compiles `templateString` to a JavaScript. By default, it returns a function tha
 | Safari  | ⏰ In Development | Missing [ReadableStreams](https://bugs.webkit.org/show_bug.cgi?id=138967), Generators and TextDecoder |
 | Edge    | ⏰ In Development | Missing TextDecoder |
 
+## Current shortcomings and potential tripwires
+
+* The parser itself is not streaming (i.e. `doT.compile()` cannot consume a stream).
+* Currently, the body of a conditional cannot contain template expressions and as such nested conditionals are not possible. I have a fix in mind.
+
 ## Example
 
 A fully runnable example can be found in the `example` folder. It is a node webserver using streaming doT as a templating language. The website itself has a service worker that uses streaming doT with the same template.
