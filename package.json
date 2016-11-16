@@ -5,6 +5,7 @@
   "main": "streaming-dot.js",
   "scripts": {
     "test": "mocha",
+    "version": "./update-version.sh",
     "build": "babili streaming-dot.js -o streaming-dot.min.js"
   },
   "repository": {
