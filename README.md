@@ -102,6 +102,6 @@ self.onfetch = event => event.respondWith(
 MIT
 
 ---
-Version 1.0.0
+Version 1.0.1
 
 [doT]: https://github.com/olado/doT
