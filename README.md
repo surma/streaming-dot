@@ -55,7 +55,8 @@ Compiles `templateString` to JavaScript. By default, it returns a function that 
 ## Current shortcomings and potential tripwires
 
 * The parser itself is not streaming (i.e. `doT.compile()` cannot consume a stream).
-* Currently, the body of a conditional cannot contain template expressions and as such nested conditionals are not possible. I have a fix in mind.
+* ~~Currently, the body of a conditional cannot contain template expressions~~
+* Nested conditionals are not possible due to the RegExp-based nature of the parser
 
 ## Example
 
@@ -70,9 +71,9 @@ To run the example, start the webserver by running `node index.js` in the `examp
 
 <h1>This is a doT template</h1>
 <h2>
-  This content was generated 
-  {{?it.serviceworker}}
-    in a service-worker
+  This content was generated
+  {{?it.location}}
+    {{=it.location}}
   {{??}}
     server-side (refresh for ServiceWorker)
   {{?}}
