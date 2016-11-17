@@ -1,4 +1,4 @@
-importScripts('/streaming-dot.js');
+importScripts('/streaming-dot.min.js');
 
 const ASSETS = [
   '/header.partial.html',

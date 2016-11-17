@@ -44,11 +44,11 @@
     c = Object.assign({}, exports.templateSettings, c);
     var helpers = 
       "var P=Promise.resolve.bind(Promise);" +
-      "function* f(p,a,b){yield p.then(v=>(a=v?a:b)&&'');yield* (a||(_=>[]))();}";
+      "function* f(p,a,b){yield p.then(v=>(a=v?a:b)&&'');yield* (a||(_=>[]))();};";
     var streamToGenerator;
     if (c.node) {
       streamToGenerator = 
-`var s=(r)=>{
+`var s=r=>{
 var d=!1,l,b=[];
 r.then(r=>{
 r.on('end',_=>{d=!0;l&&l()});
@@ -57,8 +57,8 @@ r.on('data',c=>(l&&(v=>{var t=l;l=null;t(v)})||(d=>b.push(d)))(c));
 return i={next:_=>({done:b.length===0&&d,value:P(b.shift()||new Promise(r=>l=r))}),[Symbol.iterator]:_=>i};};`;
     } else {
       streamToGenerator = 
-`var s = (r) => {
-r=r.then(r=>r.getReader());
+`var s=r=>{
+r=r.then(l=>l.getReader());
 var d=!1;
 return i={next:_=>({done:d,value:r.then(r=>r.read()).then(v=>{d=v.done;return P(v.value)})}),[Symbol.iterator]:_=>i};
 };`;

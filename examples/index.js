@@ -5,6 +5,8 @@ var express = require('express');
 var app = express();
 
 app.get('/streaming-dot.js', express.static('../'));
+app.get('/streaming-dot.min.js', express.static('../'));
+app.use('/node_modules', express.static('../node_modules'));
 app.get('/', (req, res, next) => {
   fs.readFile('app/index.dot.html', 'utf-8', (_, data) => {
     var template = doT.compile(data);

@@ -48,9 +48,9 @@ Compiles `templateString` to JavaScript. By default, it returns a function that 
 |---------|---------|-------|
 | Node    | ✅ ≥5   |       |
 | Chrome  | ✅ ≥52  | |
-| Firefox | ⏰ In Development | Missing [ReadableStreams](https://bugzilla.mozilla.org/show_bug.cgi?id=1128959) |
-| Safari  | ⏰ In Development | Missing [ReadableStreams](https://bugs.webkit.org/show_bug.cgi?id=138967), Generators and TextDecoder |
-| Edge    | ⏰ In Development | Missing TextDecoder |
+| Firefox | ⏰ In Development | Missing [ReadableStream] on fetch (https://bugzilla.mozilla.org/show_bug.cgi?id=1128959) |
+| Safari  | ⏰ In Development | Missing TextDecoder ([polyfillable][TextDecoder polyfill]) |
+| Edge    | ⏰ In Development | Missing TextDecoder ([polyfillable][TextDecoder polyfill]) and ReadableStream ([polyfillable][ReadableStream polyfill]) |
 
 ## Current shortcomings and potential tripwires
 
@@ -123,3 +123,5 @@ Version 1.1.1
 [doT]: https://github.com/olado/doT
 [HyperDev]: https://hyperdev.com/
 [generator function]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*
+[TextDecoder polyfill]: https://github.com/inexorabletash/text-encoding
+[ReadableStream polyfill: https://github.com/creatorrr/web-streams-polyfill
