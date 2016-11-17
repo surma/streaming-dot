@@ -42,7 +42,9 @@
 
   exports.compile = function(tmpl, c, def) {
     c = Object.assign({}, exports.templateSettings, c);
-    var promiseBind = "var P=Promise.resolve.bind(Promise);";
+    var helpers = 
+      "var P=Promise.resolve.bind(Promise);" +
+      "function* f(p,a,b=_=>[]){yield p.then(v=>(a=v?a:b)&&'');yield* a();}";
     var streamToGenerator;
     if (c.node) {
       streamToGenerator = 
@@ -62,7 +64,7 @@ return i={next:_=>({done:d,value:r.then(r=>r.read()).then(v=>{d=v.done;return P(
 };`;
     }
 
-    tmpl = promiseBind + streamToGenerator +
+    tmpl = helpers + streamToGenerator +
         "var g=function*(){yield P('"
         + tmpl
             .replace(/'|\\/g, "\\$&")
@@ -71,11 +73,11 @@ return i={next:_=>({done:d,value:r.then(r=>r.read()).then(v=>{d=v.done;return P(
             })
             .replace(c.conditional, function(_, els, code) {
               if (code && !els) { // {{?<something>}} === if
-                return "');yield P(" + unescape(code) + ").then(v=>v&&P('";
+                return "');yield* f(P(" + unescape(code) + "),function*(){yield P('"
               } else if (!code && els) { // {{??}} === else
-                return "')||P('";
+                return "')},function*(){yield P('";
               } else { // {{?}} === "endif"
-                return "'));yield P('";
+                return "')});yield P('";
               }
             })
             .replace(c.stream, function(_, code) {
