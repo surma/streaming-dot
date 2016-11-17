@@ -10,7 +10,7 @@ app.get('/', (req, res, next) => {
     var template = doT.compile(data);
     var stream = template({
       header: fs.createReadStream('app/header.partial.html'),
-      footer: fs.createReadStream('app/footer.partial.html'),
+      footer: fs.createReadStream('app/footer.partial.html')
     });
     res.set('Content-Type', 'text/html');
     stream.pipe(res);

@@ -54,6 +54,16 @@
       })).then(s => expect(s).to.equal('_placeholder_C2_placeholder_C3F'));
     });
 
+    it('handles values in conditionals', function () {
+      const template = doT.compile('{{?it.c1}}{{=it.v1}}{{?}}_placeholder_{{?it.c2}}NO{{??}}{{=it.v2}}{{?}}');
+      return readStreamAsString(template({
+        c1: true,
+        c2: false,
+        v1: "value1",
+        v2: "value2"
+      })).then(s => expect(s).to.equal('value1_placeholder_value2'));
+    });
+
     // Node-specific tests
     if(isNode) {
       describe('in node', function () {
