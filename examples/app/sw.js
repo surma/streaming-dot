@@ -28,7 +28,8 @@ self.onfetch = event => event.respondWith(
       const response = template({
         header: caches.match('/header.partial.html').then(r => r.body),
         footer: caches.match('/footer.partial.html').then(r => r.body),
-        location: timeoutPromise(2000).then(_ => 'in a service worker')
+        location: timeoutPromise(2000).then(_ => 'in a service worker'),
+        version: doT.version
       });
       return new Response(response, {headers: {'Content-Type': 'text/html'}});
     })
