@@ -3,8 +3,8 @@
 <h1>This is a doT template</h1>
 <h2>
   This content was generated
-  {{?it.serviceworker}}
-    in a service-worker
+  {{?it.location}}
+    {{=it.location}}
   {{??}}
     server-side (refresh for ServiceWorker)
   {{?}}
