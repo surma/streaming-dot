@@ -44,7 +44,7 @@
     c = Object.assign({}, exports.templateSettings, c);
     var helpers = 
       "var P=Promise.resolve.bind(Promise);" +
-      "function* f(p,a,b=_=>[]){yield p.then(v=>(a=v?a:b)&&'');yield* a();}";
+      "function* f(p,a,b){yield p.then(v=>(a=v?a:b)&&'');yield* (a||(_=>[]))();}";
     var streamToGenerator;
     if (c.node) {
       streamToGenerator = 
