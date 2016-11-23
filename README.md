@@ -124,4 +124,4 @@ Version 1.1.1
 [HyperDev]: https://hyperdev.com/
 [generator function]: https://developer.mozilla.org/en-US/docs/Web/JavaScript/Reference/Statements/function*
 [TextDecoder polyfill]: https://github.com/inexorabletash/text-encoding
-[ReadableStream polyfill: https://github.com/creatorrr/web-streams-polyfill
+[ReadableStream polyfill]: https://github.com/creatorrr/web-streams-polyfill
