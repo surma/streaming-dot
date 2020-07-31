@@ -4,7 +4,7 @@ Streaming doT is tagged template literal for creating streamed responses.
 
 Quick facts:
 
-- Tagged template literal `dot\`...\``.
+- Tagged template literal `` dot`...` ``.
 - Creates a WHATWG `ReadableStream` of `ArrayBuffer` for direct compatibility with `Response`.
 - Input can be strings, arrays, `ArrayBuffer`s, `ReadableStream`s and `Promise`s.
 - Strings will automatically be encoded using UTF-8.
@@ -15,7 +15,7 @@ Quick facts:
 ## Quickstart
 
 ```js
-import {dot} from "streaming-dot";
+import { dot } from "streaming-dot";
 
 new Response(dot`
 	<!doctype html>
@@ -23,12 +23,11 @@ new Response(dot`
 	${fetch("/article.html?body-only=true")}
 	<h1>Other articles</h1>
 	<ul>
-		${
-			(await idb.get("cached-articles))
-				.map(article => dot`
+		${(await idb.get("cached-articles")).map(
+      (article) => dot`
 					<li><a href="${article.link}">${article.title}</a></li>
-				`)
-		}
+				`
+    )}
 	</ul>
 	${caches.match("/footer.html")}
 `);
