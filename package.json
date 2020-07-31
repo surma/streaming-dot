@@ -6,6 +6,7 @@
     "build": "rollup -c",
     "test": "karma start"
   },
+	"main": "build/streaming-dot.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/surma/streaming-dot.git"

@@ -4,8 +4,8 @@
     "module": "esnext",
     "strict": true,
     "moduleResolution": "node",
-	"outDir": ".tmp-build",
-	"baseUrl": "./",
+    "outDir": ".tmp-build",
+    "baseUrl": "./",
     "rootDir": "./"
   }
 }
