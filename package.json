@@ -1,12 +1,12 @@
 {
   "name": "streaming-dot",
-  "version": "1.1.1",
+  "version": "2.0.0-alpha.0",
   "description": "Streaming template engine",
   "scripts": {
     "build": "rollup -c",
     "test": "karma start"
   },
-	"main": "build/streaming-dot.js",
+  "main": "build/streaming-dot.js",
   "repository": {
     "type": "git",
     "url": "git+https://github.com/surma/streaming-dot.git"
