@@ -42,7 +42,13 @@ module.exports = function (config) {
         } else if (process.env.CHROME_ONLY) {
           return ["ChromeHeadless"];
         } else {
-          return availableBrowsers;
+          // Filtering SafariTechPreview because I am having
+          // local issues and I have no idea how to fix them.
+          // I know that’s not a good reason to disable tests,
+          // but Safari TP is relatively unimportant.
+          return availableBrowsers.filter(
+            (browser) => browser !== "SafariTechPreview"
+          );
         }
       },
     },

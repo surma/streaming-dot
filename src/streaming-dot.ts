@@ -19,32 +19,35 @@ export type AcceptableStreamPayload = ArrayBuffer | ArrayBufferView | string;
 export type AcceptableItem = AcceptableStreamPayload | ReadableStream<AcceptableStreamPayload>;
 
 export function stream(streams: ReadableStream<AcceptableItem>): ReadableStream<ArrayBuffer> {
-	const {readable, writable} = new TransformStream<ArrayBuffer>();	
-	const reader = streams.getReader();
-	let writer = writable.getWriter();
-	const encoder = new TextEncoder();
-	(async function() {
-		while(true) {
-			const {value, done} = await reader.read();
-			if(done) {
-				return;
+	return new ReadableStream({
+		async start(controller) {
+			const encoder = new TextEncoder();
+			const reader = streams.getReader();
+			while(true) {
+				const {value, done} = await reader.read();
+				if(done) {
+					break;
+				}
+				if(typeof value === "string") {
+					controller.enqueue(encoder.encode(value));
+				} else if (value instanceof ArrayBuffer) {
+					controller.enqueue(value);
+				} else if (ArrayBuffer.isView(value)) {
+					controller.enqueue(value.buffer);
+				} else if(value instanceof ReadableStream) {
+					const reader = stream(value).getReader() as ReadableStreamDefaultReader<ArrayBuffer>;
+					while(true) {
+						const {value, done} = await reader.read();
+						if(done) {
+							break;
+						}
+						controller.enqueue(value!);
+					}
+				}
 			}
-			if(typeof value === "string") {
-				writer.write(encoder.encode(value));
-			} else if (value instanceof ArrayBuffer) {
-				writer.write(value);
-			} else if (ArrayBuffer.isView(value)) {
-				writer.write(value.buffer);
-			} else if(value instanceof ReadableStream) {
-				writer.releaseLock();
-				// TODO: Are these options good defaults? Should they be made configurable?
-				await stream(value).pipeTo(writable, {preventClose: true, preventAbort: true});
-				writer = writable.getWriter();
-			}
-
+			controller.close();
 		}
-	})().finally(() => writer.close());
-	return readable;
+	});
 }
 
 function streamIterable(it: Iterable<AcceptableItem>): ReadableStream<ArrayBuffer> {
