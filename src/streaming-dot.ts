@@ -15,19 +15,26 @@
  * limitations under the License.
  */
 
-export type AcceptableStreamPayload = ArrayBuffer | ArrayBufferView | string;
-export type AcceptableItem = AcceptableStreamPayload | ReadableStream<AcceptableStreamPayload>;
+type AcceptableStreamPayload = ArrayBuffer | ArrayBufferView | string;
+type AcceptableItem = AcceptableStreamPayload | ReadableStream<AcceptableStreamPayload>;
+
+async function streamForEach<T>(stream: ReadableStream<T>, f: (v: T) => Promise<void> | void): Promise<void> {
+	const reader = stream.getReader();
+	while(true) {
+		const {value, done} = await reader.read();
+		if(done) {
+			reader.releaseLock();
+			return;
+		}
+		await f(value!);
+	}
+}
 
 export function stream(streams: ReadableStream<AcceptableItem>): ReadableStream<ArrayBuffer> {
 	return new ReadableStream({
 		async start(controller) {
 			const encoder = new TextEncoder();
-			const reader = streams.getReader();
-			while(true) {
-				const {value, done} = await reader.read();
-				if(done) {
-					break;
-				}
+			await streamForEach(streams, async value => {
 				if(typeof value === "string") {
 					controller.enqueue(encoder.encode(value));
 				} else if (value instanceof ArrayBuffer) {
@@ -35,16 +42,9 @@ export function stream(streams: ReadableStream<AcceptableItem>): ReadableStream<
 				} else if (ArrayBuffer.isView(value)) {
 					controller.enqueue(value.buffer);
 				} else if(value instanceof ReadableStream) {
-					const reader = stream(value).getReader() as ReadableStreamDefaultReader<ArrayBuffer>;
-					while(true) {
-						const {value, done} = await reader.read();
-						if(done) {
-							break;
-						}
-						controller.enqueue(value!);
-					}
+					await streamForEach(stream(value), value => controller.enqueue(value));
 				}
-			}
+			});
 			controller.close();
 		}
 	});
