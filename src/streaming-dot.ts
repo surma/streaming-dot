@@ -1,4 +1,4 @@
-/**!
+/**
  *
  * Copyright 2020 Google Inc. All rights reserved.
  *
