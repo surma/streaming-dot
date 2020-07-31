@@ -19,18 +19,18 @@ Quick facts:
 import { dot } from "streaming-dot";
 
 new Response(dot`
-	<!doctype html>
-	${caches.match("/header.html")}
-	${fetch("/article.html?body-only=true")}
-	<h1>Other articles</h1>
-	<ul>
-		${(await idb.get("cached-articles")).map(
+  <!doctype html>
+  ${caches.match("/header.html")}
+  ${fetch("/article.html?body-only=true")}
+  <h1>Other articles</h1>
+  <ul>
+    ${(await idb.get("cached-articles")).map(
       (article) => dot`
-					<li><a href="${article.link}">${article.title}</a></li>
-				`
+          <li><a href="${article.link}">${article.title}</a></li>
+        `
     )}
-	</ul>
-	${caches.match("/footer.html")}
+  </ul>
+  ${caches.match("/footer.html")}
 `);
 ```
 
