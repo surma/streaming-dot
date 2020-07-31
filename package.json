@@ -18,6 +18,7 @@
   },
   "homepage": "https://github.com/surma/streaming-dot#readme",
   "devDependencies": {
+    "@rollup/plugin-node-resolve": "^8.4.0",
     "chai": "^4.2.0",
     "glob": "^7.1.6",
     "husky": "^4.2.5",
@@ -34,7 +35,8 @@
     "prettier": "^2.0.5",
     "rollup": "^2.23.0",
     "rollup-plugin-terser": "^6.1.0",
-    "typescript": "^3.9.7"
+    "typescript": "^3.9.7",
+    "uvu": "^0.3.0"
   },
   "dependencies": {},
   "husky": {
