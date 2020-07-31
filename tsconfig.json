@@ -1,0 +1,11 @@
+{
+  "compilerOptions": {
+    "target": "ES2019",
+    "module": "esnext",
+    "strict": true,
+    "moduleResolution": "node",
+	"outDir": ".tmp-build",
+	"baseUrl": "./",
+    "rootDir": "./"
+  }
+}
