@@ -61,11 +61,14 @@ function streamIterable(it: Iterable<AcceptableItem>): ReadableStream<ArrayBuffe
 export function dot(strs: string[], ...variables: AcceptableItem[]) {
 	return stream(new ReadableStream({
 		start(controller) {
-			while(variables.length > 0) {
-				controller.enqueue(strs.shift()!);
-				controller.enqueue(variables.shift()!);
+			// `strs` is readonly, so we can’t use `shift()`
+			let idx = 0;
+			while(idx < variables.length) {
+				controller.enqueue(strs[idx]);
+				controller.enqueue(variables[idx]);
+				idx++
 			}
-			controller.enqueue(strs.shift()!);
+			controller.enqueue(strs[idx]);
 			controller.close();
 		}
 	}));
