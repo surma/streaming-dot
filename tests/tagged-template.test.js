@@ -48,4 +48,16 @@ describe("tagged-template dot", function () {
     const values = await collect(stream);
     expect(decodeArrayOfBuffers(values)).to.equal("1A2");
   });
+
+  it("can handle arrays", async function () {
+    const stream = dot`1${["A", "B", "C"]}2`;
+    const values = await collect(stream);
+    expect(decodeArrayOfBuffers(values)).to.equal("1ABC2");
+  });
+  it("can handle arrays of streams", async function () {
+    const streams = ["A", "B", "C"].map((v) => streamFromIterable([v]));
+    const stream = dot`1${streams}2`;
+    const values = await collect(stream);
+    expect(decodeArrayOfBuffers(values)).to.equal("1ABC2");
+  });
 });
