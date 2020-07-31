@@ -76,4 +76,11 @@ describe("tagged-template dot", function () {
     const values = await collect(stream);
     expect(decodeArrayOfBuffers(values)).to.equal("1A2");
   });
+
+  it("can handle responses", async function () {
+    const response = new Response("A");
+    const stream = dot`1${response}2`;
+    const values = await collect(stream);
+    expect(decodeArrayOfBuffers(values)).to.equal("1A2");
+  });
 });

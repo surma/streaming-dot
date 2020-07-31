@@ -15,7 +15,7 @@
  * limitations under the License.
  */
 
-type AcceptableStreamPayload = ArrayBuffer | ArrayBufferView | string;
+type AcceptableStreamPayload = ArrayBuffer | ArrayBufferView | string | Response; 
 type AcceptableItems = AcceptableStreamPayload | ReadableStream<AcceptableStreamPayload> | AcceptableStreamPayload[];
 type AcceptableItem = AcceptableItems | Promise<AcceptableItems>;
 
@@ -49,7 +49,7 @@ export function ifUnsettled(p: Promise<AcceptableItem>, v: AcceptableItem): Prom
 	]);
 }
 
-export function stream(streams: ReadableStream<AcceptableItem>): ReadableStream<ArrayBuffer> {
+export function stream(streams: ReadableStream<AcceptableItem>): ReadableStream<Uint8Array> {
 	return new ReadableStream({
 		async start(controller) {
 			const encoder = new TextEncoder();
@@ -57,11 +57,15 @@ export function stream(streams: ReadableStream<AcceptableItem>): ReadableStream<
 				if(typeof value === "string") {
 					controller.enqueue(encoder.encode(value));
 				} else if (value instanceof ArrayBuffer) {
-					controller.enqueue(value);
+					controller.enqueue(new Uint8Array(value));
 				} else if (ArrayBuffer.isView(value)) {
-					controller.enqueue(value.buffer);
+					controller.enqueue(new Uint8Array(value.buffer));
 				} else if ('then' in value && typeof value.then === 'function') {
 					await streamForEach(stream(streamFromIterable([await value])), value => controller.enqueue(value));
+				} else if (value instanceof Response) {
+					if(value.body) {
+						await streamForEach(value.body, value => controller.enqueue(value));
+					}
 				} else if (Array.isArray(value)) {
 					const newStream = streamFromIterable(value);
 					await streamForEach(stream(newStream), value => controller.enqueue(value));
@@ -74,7 +78,7 @@ export function stream(streams: ReadableStream<AcceptableItem>): ReadableStream<
 	});
 }
 
-function streamIterable(it: Iterable<AcceptableItem>): ReadableStream<ArrayBuffer> {
+function streamIterable(it: Iterable<AcceptableItem>): ReadableStream<Uint8Array> {
 	return stream(new ReadableStream({
 		start(controller) {
 			for(const v of it) {
@@ -85,7 +89,7 @@ function streamIterable(it: Iterable<AcceptableItem>): ReadableStream<ArrayBuffe
 	}));
 }
 
-export function dot(strs: string[], ...variables: AcceptableItem[]) {
+export function dot(strs: string[], ...variables: AcceptableItem[]): ReadableStream<Uint8Array> {
 	return stream(new ReadableStream({
 		start(controller) {
 			// `strs` is readonly, so we can’t use `shift()`

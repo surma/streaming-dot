@@ -27,7 +27,7 @@ new Response(dot`
 			(await idb.get("cached-articles))
 				.map(article => dot`
 					<li><a href="${article.link}">${article.title}</a></li>
-				`);
+				`)
 		}
 	</ul>
 	${caches.match("/footer.html")}
