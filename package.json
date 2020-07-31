@@ -1,6 +1,6 @@
 {
   "name": "streaming-dot",
-  "version": "2.0.0-alpha.0",
+  "version": "2.0.0-alpha.1",
   "description": "Streaming template engine",
   "scripts": {
     "build": "rollup -c",
