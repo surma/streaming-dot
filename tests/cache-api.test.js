@@ -14,8 +14,8 @@ function getArticles() {
 describe("streaming dot with Cache API", function () {
   before(async function () {
     const cache = await caches.open("test-cache");
-    cache.put("/header.html", new Response(`<header>Header</header>`));
-    cache.put("/footer.html", new Response(`<footer>Footer</footer>`));
+    await cache.put("/header.html", new Response(`<header>Header</header>`));
+    await cache.put("/footer.html", new Response(`<footer>Footer</footer>`));
   });
 
   after(async function () {
@@ -29,10 +29,12 @@ describe("streaming dot with Cache API", function () {
 		${fetch("data:text/html,<main>Article</main>")}
 		<h1>Other articles</h1>
 		<ul>
-			${(await getArticles()).map(
-        (article) => dot`
+			${getArticles().then((articles) =>
+        articles.map(
+          (article) => dot`
 						<li><a href="${article.link}">${article.title}</a></li>
 					`
+        )
       )}
 		</ul>
 		${caches.match("/footer.html")}
