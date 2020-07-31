@@ -16,7 +16,8 @@
  */
 
 type AcceptableStreamPayload = ArrayBuffer | ArrayBufferView | string;
-type AcceptableItem = AcceptableStreamPayload | ReadableStream<AcceptableStreamPayload> | AcceptableStreamPayload[];
+type AcceptableItems = AcceptableStreamPayload | ReadableStream<AcceptableStreamPayload> | AcceptableStreamPayload[];
+type AcceptableItem = AcceptableItems | Promise<AcceptableItems>;
 
 async function streamForEach<T>(stream: ReadableStream<T>, f: (v: T) => Promise<void> | void): Promise<void> {
 	const reader = stream.getReader();
@@ -41,6 +42,13 @@ function streamFromIterable(it: Iterable<AcceptableItem>): ReadableStream<Accept
   });
 }
 
+export function ifUnsettled(p: Promise<AcceptableItem>, v: AcceptableItem): Promise<AcceptableItem> {
+	return Promise.race([
+		p,
+		Promise.resolve(v)
+	]);
+}
+
 export function stream(streams: ReadableStream<AcceptableItem>): ReadableStream<ArrayBuffer> {
 	return new ReadableStream({
 		async start(controller) {
@@ -52,6 +60,8 @@ export function stream(streams: ReadableStream<AcceptableItem>): ReadableStream<
 					controller.enqueue(value);
 				} else if (ArrayBuffer.isView(value)) {
 					controller.enqueue(value.buffer);
+				} else if ('then' in value && typeof value.then === 'function') {
+					await streamForEach(stream(streamFromIterable([await value])), value => controller.enqueue(value));
 				} else if (Array.isArray(value)) {
 					const newStream = streamFromIterable(value);
 					await streamForEach(stream(newStream), value => controller.enqueue(value));

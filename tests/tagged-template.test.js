@@ -1,4 +1,4 @@
-import { dot } from "/base/build/streaming-dot.js";
+import { dot, ifUnsettled } from "/base/build/streaming-dot.js";
 
 export async function collect(stream) {
   let buffer = [];
@@ -54,10 +54,26 @@ describe("tagged-template dot", function () {
     const values = await collect(stream);
     expect(decodeArrayOfBuffers(values)).to.equal("1ABC2");
   });
+
   it("can handle arrays of streams", async function () {
     const streams = ["A", "B", "C"].map((v) => streamFromIterable([v]));
     const stream = dot`1${streams}2`;
     const values = await collect(stream);
     expect(decodeArrayOfBuffers(values)).to.equal("1ABC2");
+  });
+
+  it("can handle promises", async function () {
+    const stream = dot`1${Promise.resolve("A")}2`;
+    const values = await collect(stream);
+    expect(decodeArrayOfBuffers(values)).to.equal("1A2");
+  });
+
+  it("can handle unsettled promises", async function () {
+    const promise = new Promise((resolve) =>
+      setTimeout(() => resolve("X"), 1000)
+    );
+    const stream = dot`1${ifUnsettled(promise, "A")}2`;
+    const values = await collect(stream);
+    expect(decodeArrayOfBuffers(values)).to.equal("1A2");
   });
 });
