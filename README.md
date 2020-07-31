@@ -6,9 +6,10 @@ Quick facts:
 
 - Tagged template literal `` dot`...` ``.
 - Creates a WHATWG `ReadableStream` of `ArrayBuffer` for direct compatibility with `Response`.
-- Input can be strings, arrays, `ArrayBuffer`s, `ReadableStream`s and `Promise`s.
+- Input can be strings, arrays, `ArrayBuffer`s, `ReadableStream`s, `Response`s and `Promise`s.
 - Strings will automatically be encoded using UTF-8.
-- 430B Brotli’d.
+- Will wait for `Promise`s to settle, unless `ifUnsettled` is used.
+- 460B Brotli’d.
 - Works in Firefox, Safari, Edge and Chrome.
 - Written in TypeScript.
 
@@ -38,6 +39,10 @@ new Response(dot`
 ### `dot`
 
 Tagged template literal. See example above.
+
+### `ifUnsettled(promise, defaultValue)`
+
+If `promise` is settled, the value of `promise` will be used, if `promise` is unsettled, `defaultValue` will be used instead.
 
 ## Compatibility
 
