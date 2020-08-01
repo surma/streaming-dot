@@ -28,10 +28,7 @@ export default [
       format: "esm",
     },
     plugins: [
-      resolve({
-        browser: true,
-        modulesOnly: true,
-      }),
+      resolve(),
       {
         async buildStart() {
           this.emitFile({
